@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 
 export 'package:gif_view/src/gif_controller.dart';
 
+
 ///
 /// Created by
 ///

@@ -42,8 +42,6 @@ class GifController extends ChangeNotifier {
   }
 
   void _runNextFrame() async {
-    await Future.delayed(_frames[currentIndex].duration);
-
     if (status == GifStatus.reversing) {
       if (currentIndex > 0) {
         currentIndex--;
@@ -62,8 +60,12 @@ class GifController extends ChangeNotifier {
       }
     }
 
-    onFrame?.call(currentIndex);
-    notifyListeners();
+    if(status != GifStatus.stoped){
+      await Future.delayed(_frames[currentIndex].duration);
+      onFrame?.call(currentIndex);
+      notifyListeners();
+    }
+
     _run();
   }
 
@@ -87,6 +89,7 @@ class GifController extends ChangeNotifier {
         currentIndex = status == GifStatus.reversing ? _frames.length - 1 : 0;
       }
       onStart?.call();
+      onFrame?.call(currentIndex);
       _run();
     } else {
       status = _inverted ? GifStatus.reversing : GifStatus.playing;
