@@ -174,6 +174,10 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.image != widget.image) {
       _loadImage(updateFrames: true);
+    }else{
+      if (controller.autoPlay) {
+        controller.play();
+      }
     }
   }
 
