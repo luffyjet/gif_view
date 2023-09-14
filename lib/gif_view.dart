@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:gif_view/src/gif_controller.dart';
 import 'package:gif_view/src/git_frame.dart';
 import 'package:http/http.dart' as http;
+import 'package:quiver/cache.dart';
 
 export 'package:gif_view/src/gif_controller.dart';
 
@@ -24,7 +25,7 @@ export 'package:gif_view/src/gif_controller.dart';
 /// Rafaelbarbosatec
 /// on 23/09/21
 
-final Map<String, List<GifFrame>> _cache = {};
+final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 20);//cache gif data size
 
 class GifView extends StatefulWidget {
   final GifController? controller;
@@ -224,8 +225,9 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
     try {
       Uint8List? data;
       String key = _getKeyImage(provider);
-      if (_cache.containsKey(key)) {
-        frameList = _cache[key]!;
+      var v = await _cache.get(key);
+      if (null != v) {
+        frameList = v;
         return frameList;
       }
       if (provider is NetworkImage) {
@@ -269,7 +271,7 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
           ),
         );
       }
-      _cache.putIfAbsent(key, () => frameList);
+      _cache.set(key, frameList);
     } catch (e) {
       if (widget.onError == null) {
         rethrow;
