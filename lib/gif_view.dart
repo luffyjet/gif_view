@@ -25,7 +25,7 @@ export 'package:gif_view/src/gif_controller.dart';
 /// Rafaelbarbosatec
 /// on 23/09/21
 
-final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 20);//cache gif data size
+final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 30);//cache gif data size
 
 class GifView extends StatefulWidget {
   final GifController? controller;
