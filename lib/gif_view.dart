@@ -292,6 +292,7 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
   void dispose() {
     controller.stop();
     controller.removeListener(_listener);
+    controller.dispose();
     _animationController?.dispose();
     _animationController = null;
     super.dispose();

@@ -109,6 +109,12 @@ class GifController extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    _frames = [];
+  }
+
   void configure(List<GifFrame> frames, {bool updateFrames = false}) {
     _frames = frames;
     if (!updateFrames) {
