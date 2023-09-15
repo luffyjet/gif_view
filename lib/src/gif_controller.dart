@@ -77,6 +77,7 @@ class GifController extends ChangeNotifier {
   int get countFrames => _frames.length;
 
   void play({bool? inverted, int? initialFrame}) {
+    print('play status: ${status.name}');
     if (status == GifStatus.loading) return;
     _inverted = inverted ?? _inverted;
 
@@ -147,6 +148,7 @@ class GifController extends ChangeNotifier {
     for (var k in keys) {
       var v = await _cache.get(k);
       if (null != v) {
+        print('_disposeImages gif: $k');
         for (var element in v) {
           element.imageInfo.dispose();
         }

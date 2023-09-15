@@ -156,6 +156,7 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    print('initState');
     if (widget.withOpacityAnimation) {
       _animationController = AnimationController(
         vsync: this,
@@ -171,10 +172,14 @@ class GifViewState extends State<GifView> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(covariant GifView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget');
     if (oldWidget.image != widget.image) {
-      _loadImage(updateFrames: true);
+      print('didUpdateWidget _loadImage');
+      _loadImage(updateFrames: false);
     }else{
+      print('didUpdateWidget autoPlay');
       if (controller.autoPlay) {
+        controller.stop();
         controller.play();
       }
     }
