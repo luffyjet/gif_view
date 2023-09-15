@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gif_view/src/git_frame.dart';
+import 'package:quiver/cache.dart';
+
+final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 50);//cache gif data size
 
 enum GifStatus { loading, playing, stoped, paused, reversing }
 
 class GifController extends ChangeNotifier {
+  Set<String> keys = {};
   List<GifFrame> _frames = [];
   int currentIndex = 0;
   GifStatus status = GifStatus.loading;
@@ -113,6 +117,7 @@ class GifController extends ChangeNotifier {
   void dispose(){
     super.dispose();
     _frames = [];
+    _disposeImages();
   }
 
   void configure(List<GifFrame> frames, {bool updateFrames = false}) {
@@ -123,6 +128,30 @@ class GifController extends ChangeNotifier {
         play();
       }
       notifyListeners();
+    }
+  }
+
+  Future<List<GifFrame>?> getCache(String key) async{
+    return _cache.get(key);
+  }
+
+
+  Future<void> setCache(String key, List<GifFrame> value)async {
+    keys.add(key);
+    _cache.set(key, value);
+  }
+
+
+  Future<void> _disposeImages() async {
+    print('_disposeImages');
+    for (var k in keys) {
+      var v = await _cache.get(k);
+      if (null != v) {
+        for (var element in v) {
+          element.imageInfo.dispose();
+        }
+      }
+      _cache.invalidate(k);
     }
   }
 }
