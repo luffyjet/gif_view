@@ -7,7 +7,7 @@ final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 50);//cache gif
 enum GifStatus { loading, playing, stoped, paused, reversing }
 
 class GifController extends ChangeNotifier {
-  Set<String> keys = {};
+  // Set<String> keys = {};
   List<GifFrame> _frames = [];
   int currentIndex = 0;
   GifStatus status = GifStatus.loading;
@@ -118,7 +118,7 @@ class GifController extends ChangeNotifier {
   void dispose(){
     super.dispose();
     _frames = [];
-    _disposeImages();
+    // _disposeImages();
   }
 
   void configure(List<GifFrame> frames, {bool updateFrames = false}) {
@@ -138,22 +138,24 @@ class GifController extends ChangeNotifier {
 
 
   Future<void> setCache(String key, List<GifFrame> value)async {
-    keys.add(key);
+    // keys.add(key);
     _cache.set(key, value);
   }
 
 
-  Future<void> _disposeImages() async {
-    print('_disposeImages');
-    for (var k in keys) {
-      var v = await _cache.get(k);
-      if (null != v) {
-        print('_disposeImages gif: $k');
-        for (var element in v) {
-          element.imageInfo.dispose();
-        }
-      }
-      _cache.invalidate(k);
-    }
-  }
+  // Future<void> _disposeImages() async {
+  //   print('_disposeImages');
+  //   for (var k in keys) {
+  //     var v = await _cache.get(k);
+  //     if (null != v) {
+  //       print('_disposeImages gif: $k');
+  //       for (var element in v) {
+  //         element.imageInfo.dispose();
+  //       }
+  //     }
+  //     _cache.invalidate(k);
+  //   }
+  //
+  //   keys.clear();
+  // }
 }
