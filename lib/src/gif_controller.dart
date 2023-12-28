@@ -38,7 +38,7 @@ class GifController extends ChangeNotifier {
 
       case GifStatus.stoped:
         onFinish?.call();
-        currentIndex = 0;
+        // currentIndex = 0;
         break;
       case GifStatus.loading:
       case GifStatus.paused:
