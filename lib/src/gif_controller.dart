@@ -14,6 +14,7 @@ class GifController extends ChangeNotifier {
 
   final bool autoPlay;
   final VoidCallback? onFinish;
+  final VoidCallback? onInterrupt;
   final VoidCallback? onStart;
   final ValueChanged<int>? onFrame;
 
@@ -26,6 +27,7 @@ class GifController extends ChangeNotifier {
     bool inverted = false,
     this.onStart,
     this.onFinish,
+    this.onInterrupt,
     this.onFrame,
   }) : _inverted = inverted;
 
@@ -37,7 +39,12 @@ class GifController extends ChangeNotifier {
         break;
 
       case GifStatus.stoped:
-        onFinish?.call();
+        print('GifStatus.stoped cur=$currentIndex , len=${_frames.length}');
+        if(currentIndex < _frames.length - 1){
+          onInterrupt?.call();
+        }else {
+          onFinish?.call();
+        }
         // currentIndex = 0;
         break;
       case GifStatus.loading:
