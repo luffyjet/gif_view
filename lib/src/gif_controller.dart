@@ -2,24 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:gif_view/src/git_frame.dart';
 import 'package:quiver/cache.dart';
 
+typedef GifCallback<T> = void Function(T? data);
+typedef GifFrameCallback<T> = void Function(int value, T? data);
+
 final _cache = MapCache<String, List<GifFrame>>.lru(maximumSize: 50);//cache gif data size
 
 enum GifStatus { loading, playing, stoped, paused, reversing }
 
-class GifController extends ChangeNotifier {
+class GifController<T> extends ChangeNotifier {
   // Set<String> keys = {};
   List<GifFrame> _frames = [];
   int currentIndex = 0;
   GifStatus status = GifStatus.loading;
 
   final bool autoPlay;
-  final VoidCallback? onFinish;
-  final VoidCallback? onInterrupt;
-  final VoidCallback? onStart;
-  final ValueChanged<int>? onFrame;
+  final GifCallback<T>? onFinish;
+  final GifCallback<T>? onInterrupt;
+  final GifCallback<T>? onStart;
+  final GifFrameCallback<T>? onFrame;
 
   bool loop;
   bool _inverted;
+
+  final T? tag;
 
   GifController({
     this.autoPlay = true,
@@ -29,6 +34,7 @@ class GifController extends ChangeNotifier {
     this.onFinish,
     this.onInterrupt,
     this.onFrame,
+    this.tag,
   }) : _inverted = inverted;
 
   void _run() {
@@ -41,9 +47,9 @@ class GifController extends ChangeNotifier {
       case GifStatus.stoped:
         print('GifStatus.stoped cur=$currentIndex , len=${_frames.length}');
         if(currentIndex < _frames.length - 1){
-          onInterrupt?.call();
+          onInterrupt?.call(tag);
         }else {
-          onFinish?.call();
+          onFinish?.call(tag);
         }
         // currentIndex = 0;
         break;
@@ -73,7 +79,7 @@ class GifController extends ChangeNotifier {
 
     if(status != GifStatus.stoped){
       await Future.delayed(_frames[currentIndex].duration);
-      onFrame?.call(currentIndex);
+      onFrame?.call(currentIndex, tag);
       notifyListeners();
     }
 
@@ -100,8 +106,8 @@ class GifController extends ChangeNotifier {
       } else {
         currentIndex = status == GifStatus.reversing ? _frames.length - 1 : 0;
       }
-      onStart?.call();
-      onFrame?.call(currentIndex);
+      onStart?.call(tag);
+      onFrame?.call(currentIndex, tag);
       _run();
     } else {
       status = _inverted ? GifStatus.reversing : GifStatus.playing;
